@@ -218,6 +218,52 @@ const displayBackgroundImage = (type, backgroundPath) => {
   }
 };
 
+const displaySlider = async () => {
+  const { results } = await fetchApiData("movie/now_playing");
+  results.forEach((slide) => {
+    const swiperDiv = document.createElement("div");
+    swiperDiv.classList.add("swiper-slide");
+
+    swiperDiv.innerHTML = `
+      <a href="movie-details.html?id=${slide.id}">
+        <img src="https://image.tmdb.org/t/p/w500/${slide.poster_path}" alt="${slide.title}" />
+      </a>
+      <h4 class="swiper-rating">
+        <i class="fas fa-star text-secondary"></i> ${slide.vote_average}/ 10
+      </h4>
+    `;
+    document.querySelector(".swiper-wrapper").appendChild(swiperDiv);
+    initSwiper();
+  });
+};
+
+const initSwiper = () => {
+  new Swiper(".swiper", {
+    slidesPerView : 1,
+    spaceBetween:30,
+    freeMode:true,
+    loop:true,
+    autoplay :{
+      delay: 4000,
+      disableOnInteraction:false,
+    },
+    breakpoints:{
+      500:{
+        slidesPerView:2
+      },
+      700:{
+        slidesPerView:3
+      },
+      1200:{
+        slidesPerView:4
+      },
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+};
 const fetchApiData = async (endpoint) => {
   const API_KEY = "275ff089c230277879324e81a548ced4";
   const API_URL = "https://api.themoviedb.org/3/";
@@ -250,6 +296,7 @@ const init = () => {
   switch (state.currentPage) {
     case "/":
     case "/index.html":
+      displaySlider();
       displayPopularMovies();
       break;
     case "/shows.html":
