@@ -70,6 +70,10 @@ const displayMovieDetail = async () => {
   const movieId = window.location.search.split("=")[1];
   const movie = await fetchApiData(`movie/${movieId}`);
 
+  //overlay for background image
+
+  displayBackgroundImage("movie", movie.backdrop_path);
+
   const div = document.createElement("div");
 
   div.innerHTML = `
@@ -103,15 +107,23 @@ const displayMovieDetail = async () => {
     <ul class="list-group">
       ${movie.genres.map((genre) => `<li>${genre.name}</li>`).join("")}
     </ul>
-    <a href="${movie.homepage}" target="_blank" class="btn">Visit Movie Homepage</a>
+    <a href="${
+      movie.homepage
+    }" target="_blank" class="btn">Visit Movie Homepage</a>
   </div>
 </div>
 <div class="details-bottom">
   <h2>Movie Info</h2>
   <ul>
-    <li><span class="text-secondary">Budget:</span> $${Intl.NumberFormat('en-US').format(movie.budget)}</li>
-    <li><span class="text-secondary">Revenue:</span> $${Intl.NumberFormat('en-US').format(movie.revenue)}</li>
-    <li><span class="text-secondary">Runtime:</span> ${movie.runtime} minutes</li>
+    <li><span class="text-secondary">Budget:</span> $${Intl.NumberFormat(
+      "en-US"
+    ).format(movie.budget)}</li>
+    <li><span class="text-secondary">Revenue:</span> $${Intl.NumberFormat(
+      "en-US"
+    ).format(movie.revenue)}</li>
+    <li><span class="text-secondary">Runtime:</span> ${
+      movie.runtime
+    } minutes</li>
     <li><span class="text-secondary">Status:</span> ${movie.status}</li>
   </ul>
   <h4>Production Companies</h4>
@@ -125,6 +137,8 @@ const displayMovieDetail = async () => {
 const displayTvDetail = async () => {
   const showId = window.location.search.split("=")[1];
   const show = await fetchApiData(`tv/${showId}`);
+
+  displayBackgroundImage("show", show.backdrop_path);
 
   const div = document.createElement("div");
 
@@ -182,6 +196,26 @@ const displayTvDetail = async () => {
   )}</div>
 </div>`;
   document.querySelector("#show-details").appendChild(div);
+};
+
+const displayBackgroundImage = (type, backgroundPath) => {
+  const overlayDiv = document.createElement("div");
+  overlayDiv.style.backgroundImage = `url("https://image.tmdb.org/t/p/original/${backgroundPath}")`;
+  overlayDiv.style.backgroundSize = "cover";
+  overlayDiv.style.backgroundPosition = "center";
+  overlayDiv.style.backgroundRepeat = "no-repeat";
+  overlayDiv.style.height = "100vh";
+  overlayDiv.style.width = "100vw";
+  overlayDiv.style.position = "absolute";
+  overlayDiv.style.top = "0";
+  overlayDiv.style.left = "0";
+  overlayDiv.style.zIndex = "-1";
+  overlayDiv.style.opacity = "0.1";
+  if (type === "movie") {
+    document.querySelector("#movie-details").appendChild(overlayDiv);
+  } else {
+    document.querySelector("#show-details").appendChild(overlayDiv);
+  }
 };
 
 const fetchApiData = async (endpoint) => {
